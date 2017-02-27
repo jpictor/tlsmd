@@ -1,0 +1,154 @@
+body {
+	background-color:#cdc8b0;  /*was:#ddd;*/
+	background-color:#999;  /*was:#ddd;*/
+	margin:2% 5% 2% 5%;
+	}
+
+#page {
+	background-color:#fff;
+	outline:#aaa solid thin;
+	padding:1%;
+	font-family:arial, helvetica, sans-serif;
+	}
+#page h1 {
+	font-size:x-large;
+	color:#ff9933;
+	}
+
+#navcontainer ul {
+	font-size:small;
+	padding-left:0;
+	margin-left:0;
+	background-color:#ccc;
+	color:#fff;
+	width:100%;
+	}
+#navcontainer ul li { display:inline; }
+#navcontainer ul li a {
+	padding:0.1em 1.0em;
+	margin-left:0.5em;
+	background-color:#bbb;
+	color:#fff;
+	text-decoration:none;
+	border:1px solid #999;
+	}
+#navcontainer ul li a:hover {
+	background-color:#eee;
+	color:black;
+	}
+
+/* style classes used by documentation */
+/*
+#caption {
+	margin-left:8%;
+	margin-right:8%;
+	font-size:-1
+	}
+*/
+#bibliography ul li {
+        font-size:small;
+        margin-top:0.5em;
+        }
+
+/* style classes used by webtlsmd.cgi */
+
+.step_title {
+	line-height:2.0em;
+	font-size:large
+	}
+  
+.submit_table {
+	padding:10px;
+	border:thin solid #00f;
+	background-color:#eeeeee;
+	}
+  
+.inner_table {
+	font-size:small;
+	width:90%;
+	padding:10px;
+	border:thin solid #000;
+	background-color:#ddd;
+	}
+
+.inner_title {
+	background-color:#ccccff;
+	line-height:2.0em;
+	}
+
+.ninner_table {
+	font-size:small;
+	width:100%;
+	padding:2%;
+	border:thin solid #aaa;
+	background-color:#eee;
+	}
+
+.perror {
+	text-align:left;
+	font-size:x-small;
+	width:70%;
+	padding:10px;
+	border:thin solid #f00;
+	background-color:#faa;
+	}
+
+.note {
+	text-align:left;
+	width:70%;
+	padding:10px;
+	border:thin solid #f00;
+	background-color:#faa;
+	}
+
+.status_table {
+        width:100%;
+        padding:1px;
+	background-color:#eee;
+	font-size:x-small;
+	border:1px solid #aaa;
+	}
+.status_table_head { background-color:#8FBC8F; /*#aad;*/ }
+.status_table_row1 { background-color:#ddd; }
+.status_table_row2 { background-color:#eee; }
+
+/* 2009-05-13 */
+.explore_table {
+        width:100%;
+        padding:1px;
+	background-color:#fff; /*#eee;*/
+	font-size:x-small;
+	border:1px solid #aaa;
+	}
+.explore_table_head { background-color:#8FBC8F; }
+.explore_table_row { background-color:#fff; }
+
+td.c { text-align:center; }
+td.l { text-align:left; }
+td.r { text-align:right; }
+tr.r { text-align:right; }
+td.small { font-size:small; }
+
+.warning {
+	text-align:center;
+	color:#f00;
+	font-style:italic;
+	}
+
+span.small { font-size:x-small; }
+
+.prog-border {
+	height: 100%;
+	width:  150px;
+	background: #fff;
+	border: 1px solid black;
+	margin: 0;
+	padding: 0;
+	}
+.prog-bar {
+	height: 10px;
+	margin: 0px;
+	padding: 0;
+	background: #8FBC8F;
+	}
+
