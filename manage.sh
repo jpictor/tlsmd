@@ -1,8 +1,8 @@
 #!/bin/bash
 
 ## the name of this service
-SERVICE_NAME=pictorlabs
-SERVICE_PORT=9193
+SERVICE_NAME=tlsmd
+SERVICE_PORT=3000
 
 ## need this to resolve symlinks
 pushd . > /dev/null
@@ -21,7 +21,7 @@ export SERVICE_ROOT="${SCRIPT_PATH}"
 export PYTHON=python
 
 ## add src/ directory to PYTHONPATH
-export PYTHONPATH=${SERVICE_ROOT}/src
+export PYTHONPATH=${SERVICE_ROOT}/src:${SERVICE_ROOT}/build/lib.macosx-10.11-intel-2.7:${SERVICE_ROOT}
 
 ## number of worker processes
 NUM_WORKERS=10
