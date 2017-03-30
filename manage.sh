@@ -72,7 +72,7 @@ case "$1" in
     build_all)
         set -e
         build_vpython
-        build_angular_app
+        #build_angular_app
         build_collectstatic
         ;;
     build_vpython)
