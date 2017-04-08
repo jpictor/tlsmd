@@ -32,5 +32,5 @@ setup(
     author_email = 'jay.painter@gmail.com',
     url = 'https://github.com/jpictor/',
     long_description = LONG_DESCRIPTION,
-    ext_modules = [tlsmdmodule, tlsvld]
+    ext_modules = [tlsmdmodule]  # add tlsvld here when fixed
 )
