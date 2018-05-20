@@ -48,14 +48,14 @@ class CIFStructureBuilder(StructureBuilder.StructureBuilder):
         """Read unit information form various tags and compute
         the fractional-to-Cartesian conversion matrix.
         """
-        a = CIF.makeNumber(self.cif.tags["cell_length_a"])
-        b = CIF.makeNumber(self.cif.tags["cell_length_b"])
-        c = CIF.makeNumber(self.cif.tags["cell_length_c"])
-        alpha_degrees = CIF.makeNumber(self.cif.tags["cell_angle_alpha"])
-        beta_degrees = CIF.makeNumber(self.cif.tags["cell_angle_beta"])
-        gamma_degrees = CIF.makeNumber(self.cif.tags["cell_angle_gamma"])
-        z = self.cif.tags["cell_formula_units_z"]
-        space_group = self.cif.tags.get("symmetry_space_group_name_h-m", None)
+        a = CIF.makeNumber(self.cif.tags["cell.length_a"])
+        b = CIF.makeNumber(self.cif.tags["cell.length_b"])
+        c = CIF.makeNumber(self.cif.tags["cell.length_c"])
+        alpha_degrees = CIF.makeNumber(self.cif.tags["cell.angle_alpha"])
+        beta_degrees = CIF.makeNumber(self.cif.tags["cell.angle_beta"])
+        gamma_degrees = CIF.makeNumber(self.cif.tags["cell.angle_gamma"])
+        #z = self.cif.tags["cell.formula_units_z"]
+        space_group = self.cif.tags.get("symmetry.space_group_name_H-M", None)
         unit_cell = {
             "length_a": a,
             "length_b": b,
@@ -63,7 +63,7 @@ class CIFStructureBuilder(StructureBuilder.StructureBuilder):
             "angle_alpha": alpha_degrees,
             "angle_beta": beta_degrees,
             "angle_gamma": gamma_degrees,
-            "z": z,
+            #"z": z,
             "space_group": space_group
         }
         self.load_unit_cell(unit_cell)
@@ -117,9 +117,9 @@ class CIFStructureBuilder(StructureBuilder.StructureBuilder):
                                         table, "atom_site_U_iso_or_equiv", i)
             add_number(atm_map, "occupancy", table, "atom_site_occupancy", i)
             try:
-                fx = atm_map["fractx"] 
-                fy = atm_map["fracty"] 
-                fz = atm_map["fractz"] 
+                fx = atm_map["fractx"]
+                fy = atm_map["fracty"]
+                fz = atm_map["fractz"]
             except KeyError:
                 warning("read_atoms: missing coordinates")
             else:

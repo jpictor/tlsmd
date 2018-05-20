@@ -36,14 +36,14 @@ class AtomMathTestCase(TestCase):
         a2 = Structure.Atom(x=54.810, y=57.974, z=13.593, res_name='ILE')
         a3 = Structure.Atom(x=55.221, y=58.358, z=12.242, res_name='ILE')
         a4 = Structure.Atom(x=54.461, y=59.575, z=11.722, res_name='ILE')
-        print "PHI: %.3f" % calc_torsion_angle(a1, a2, a3, a4)
+        #print "PHI: %.3f" % calc_torsion_angle(a1, a2, a3, a4)
         # PSI: N-CA-C'-N
         a1 = Structure.Atom(x=54.810, y=57.974, z=13.593, res_name='ILE')
         a2 = Structure.Atom(x=55.221, y=58.358, z=12.242, res_name='ILE')
         a3 = Structure.Atom(x=54.461, y=59.575, z=11.722, res_name='ILE')
         a4 = Structure.Atom(x=54.985, y=60.748, z=12.087, res_name='SER')
-        print "PSI: %.3f" % calc_torsion_angle(a1, a2, a3, a4)
-        print "="*40
-        print "a1:", a1.position
-        print "calc_angle:", calc_angle(a1, a2, a3)
-        print "calc_torsion_angle:", calc_torsion_angle(a1, a2, a3, a4)
+        #print "PSI: %.3f" % calc_torsion_angle(a1, a2, a3, a4)
+        #print "="*40
+        #print "a1:", a1.position
+        #print "calc_angle:", calc_angle(a1, a2, a3)
+        #print "calc_torsion_angle:", calc_torsion_angle(a1, a2, a3, a4)

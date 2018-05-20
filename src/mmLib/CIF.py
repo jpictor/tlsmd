@@ -83,14 +83,13 @@ class DataBlock:
             token = lexer.next_token()
 
     def get_tag(self, token, lexer, filename):
-        if '.' in token.value:
-            raise CIFSyntaxError(token.line, "'.' appears in tag name %s" %
-                                                token.value)
+        #if '.' in token.value:
+        #    raise CIFSyntaxError(token.line, "'.' appears in tag name %s" % token.value)
+
         name = token.value.lower()
         t = lexer.next_token()
         if t.type is not L_VALUE:
-            raise CIFSyntaxError(token.line, "missing value for tag %s" %
-                                                token.value)
+            raise CIFSyntaxError(token.line, "missing value for tag %s" % token.value)
         self.tags[name] = t.value
 
     def get_table(self, token, lexer, filename):
@@ -120,8 +119,7 @@ class Table:
             row = []
             for i in range(numColumns):
                 if token.type is not L_VALUE:
-                    raise CIFSyntaxError(token.line, "expected value and got %s"
-                                                    % token.type)
+                    raise CIFSyntaxError(token.line, "expected value and got %s" % token.type)
                 row.append(token.value)
                 token = lexer.next_token()
             self.rows.append(row)
@@ -331,34 +329,3 @@ def makeNumber(s):
         return int(s)
     except ValueError:
         return float(s)
-
-
-### <TESTING>
-if __name__ == "__main__":
-    """Module tests.
-    """
-    def lexer_test(test_file):
-        f = open(test_file)
-        lexer = Lexer(f, test_file)
-        while True:
-            token = lexer.next_token()
-            if token.type is L_EOF:
-                break
-            print formatMessage(test_file, token.line,
-                "%s: %s" % (token.type, token.value))
-
-        f.close()
-
-    def parser_test(test_file):
-        cif = CIFFile()
-        cif.load_file(test_file)
-        print "%d data blocks" % len(cif.data_blocks)
-        import pprint
-        for db in cif.data_blocks:
-            print "%s: %d tags, %d tables" % (db.name,
-                len(db.tags), len(db.tables))
-            pprint.pprint(db.tags)
-
-    #lexer_test("ccd.cif")
-    parser_test("ccd.cif")
-### </TESTING>
