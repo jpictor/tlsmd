@@ -21,7 +21,7 @@ export SERVICE_ROOT="${SCRIPT_PATH}"
 export PYTHON=python
 
 ## add src/ directory to PYTHONPATH
-export PYTHONPATH=${SERVICE_ROOT}/src:${SERVICE_ROOT}/build/lib.macosx-10.11-intel-2.7:${SERVICE_ROOT}
+export PYTHONPATH=${SERVICE_ROOT}/src:${SERVICE_ROOT}/build/lib.macosx-10.13-intel-2.7/
 
 ## number of worker processes
 NUM_WORKERS=10
@@ -58,7 +58,7 @@ function build_vpython {
 
 ## build python C/FORTRAN modules
 function build_cmodules {
-  echo "Building Python Extions (c-modules)..."
+        echo "Building Python Extions (c-modules)..."
         python setup.py build
 }
 
@@ -78,16 +78,22 @@ case "$1" in
         build_vpython
         build_cmodules
         build_collectstatic
-        ;;
+    ;;
     build_vpython)
         set -e
         build_vpython
-        ;;
+    ;;
+    install_requirements)
+        set -e
+        activate_vpython
+        echo "Installing requirements.txt..."
+        pip install -r requirements.txt
+    ;;
     build_cmodules)
         set -e
         activate_vpython
         build_cmodules
-        ;;
+    ;;
     create_rabbitmq_account)
         rabbitmqctl add_user ${SERVICE_NAME}_user password
         rabbitmqctl add_vhost ${SERVICE_NAME}_vhost
@@ -101,13 +107,13 @@ case "$1" in
         export DJANGO_SETTINGS_MODULE=baseapp.settings
         shift 1
         exec "$@"
-	;;
+	  ;;
     python)
         activate_vpython
         shift 1
         export DJANGO_SETTINGS_MODULE=baseapp.settings
         exec ${PYTHON} "$@"
-	;;
+	  ;;
     celery_dev)
         activate_vpython
         exec celery worker \
@@ -118,7 +124,7 @@ case "$1" in
             --schedule=${SERVICE_ROOT}/var/celerybeat.db \
             --pidfile=${SERVICE_ROOT}/var/celerybeat.pid \
             --beat
-	;;
+	  ;;
     celery_q_default)
         activate_vpython
         exec celery worker \
@@ -128,7 +134,7 @@ case "$1" in
             --maxtasksperchild=${MAX_TASKS_PER_CHILD} \
             --loglevel=${CELERY_LOGLEVEL} \
             ${CELERY_UID_ARGS}
-        ;;
+    ;;
     celerybeat_prod)
         activate_vpython
         exec celery beat \
@@ -137,11 +143,11 @@ case "$1" in
             --pidfile=${SERVICE_ROOT}/var/celerybeat.pid \
             --loglevel=${CELERY_LOGLEVEL} \
             ${CELERY_UID_ARGS}
-	;;
+    ;;
     flower)
         activate_vpython
         exec celery -A baseapp.celery_ext.app flower --loglevel=${CELERY_LOGLEVEL}
-	;;
+	  ;;
     rungu_dev)
         activate_vpython
         exec gunicorn \
@@ -151,7 +157,7 @@ case "$1" in
                 --max-requests=${MAX_TASKS_PER_CHILD} \
                 --log-config=${SERVICE_ROOT}/etc/logging_dev.ini \
                 baseapp.wsgi:application
-	;;
+	  ;;
     rungu_prod)
         activate_vpython
         exec gunicorn \
@@ -166,11 +172,11 @@ case "$1" in
                 --access-logfile=- \
                 --error-logfile=- \
                 baseapp.wsgi:application
-        ;;
+    ;;
     *)
         activate_vpython
         export DJANGO_SETTINGS_MODULE=baseapp.settings
         export SERVICE_PORT=${SERVICE_PORT}
         exec ${PYTHON} ${SERVICE_ROOT}/etc/run_django.py "$@"
-        ;;
+    ;;
 esac

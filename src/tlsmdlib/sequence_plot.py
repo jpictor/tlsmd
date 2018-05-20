@@ -5,9 +5,9 @@
 ## included as part of this package.
 
 ## Python Imaging Library imports
-import Image
-import ImageDraw
-import ImageFont
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
 
 ## TLSMD
 import misc

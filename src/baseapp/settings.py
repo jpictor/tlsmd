@@ -59,7 +59,7 @@ except IOError:
 DATA_ROOT = os.path.join(SERVICE_ROOT, 'data')
 LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO').upper()
 REPORT_BASEURL = os.environ.get('ENTITY_BASEURL', 'http://10.0.0.152:8192/report')
-REPORT_ROOT = os.environ.get('REPORT_ROOT', '/disk/d0/data/report/')
+REPORT_ROOT = os.environ.get('REPORT_ROOT', '/disk/d0/data/report')
 DATABASE_URL = os.environ.get('DATABASE_URL', 'postgres://postgres:password@10.0.0.152/tlsmd')
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'amqp://{service_name}_user:password@localhost:5672/{service_name}_vhost')
 
@@ -261,11 +261,8 @@ REST_FRAMEWORK = {
 
 ###### Session configuration
 
-#_two_weeks_seconds = 60 * 60 * 24 * 14  # two weeks in seconds
-#SESSION_COOKIE_AGE = _two_weeks_seconds
-#SESSION_COOKIE_DOMAIN = None  # standard domain cookie
+_one_year_seconds_seconds = 60 * 60 * 24 * 365
+SESSION_COOKIE_AGE = _one_year_seconds_seconds
 SESSION_COOKIE_HTTPONLY = False
-SESSION_COOKIE_NAME = 'plsessionid'
-#SESSION_COOKIE_PATH = '/'
-#SESSION_COOKIE_SECURE = False
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_NAME = 'tlsmd_sessionid'
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False

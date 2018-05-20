@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <cminpack-1/minpack.h>
 #include "tls_model_nl.h"
 
 #define PI     3.1415926535897931
@@ -21,8 +22,8 @@
 namespace TLSMD {
 
 // prototype for MINPACK FORTRAN subroutine
-typedef void (*FCN)(int*, int*, double*, double*, double*, int*, int*);
-extern "C" void lmder1_(FCN, int*, int*, double*, double*, double*, int*, double*, int*, int*, double*, int*);
+typedef void (*FCN)(const int*, const int*, const double*, double*, double*, const int*, int*);
+//extern "C" void lmder1_(FCN, int*, int*, double*, double*, double*, int*, double*, int*, int*, double*, int*);
 
 static ConstrainedFitIsotropicTLSModel *g_pISolver = 0;
 static ConstrainedFitAnisotropicTLSModel *g_pASolver = 0;
@@ -34,7 +35,7 @@ zero_dmatrix(double *M, int m, int n) {
   for (int i = 0; i < sz; ++i, ++M) *M = 0.0;
 }
 
-// calculate the 6x6 Jacobian of the positive definite tensor 
+// calculate the 6x6 Jacobian of the positive definite tensor
 // x,y,z are the root-mean-squre values of the principal tensor components
 // a,b,c are Alpha/Beta/Gamma convention Euler angles which orient the tensor
 inline void
@@ -82,7 +83,7 @@ calc_pdtensor_derivs(double x, double y, double z, double a, double b, double c,
   /* dT33/dx */
   dT[2][0] = 2.0*x*sa2*sb2;
   /* dT12/dx */
-  dT[3][0] = -0.25*x*(4.0*cb*c2c*s2a + (c2a*(3.0+c2b) + 2.0*sb2)*s2c); 
+  dT[3][0] = -0.25*x*(4.0*cb*c2c*s2a + (c2a*(3.0+c2b) + 2.0*sb2)*s2c);
   /* dT13/dx */
   dT[4][0] = 2.0*x*sa*sb*(ca*cc - cb*sa*sc);
   /* dT23/dx */
@@ -204,13 +205,13 @@ calc_pdtensor(double x, double y, double z, double a, double b, double c, double
   tmp1 = cb*cc*sa + ca*sc;
   tmp2 = ca*cb*cc - sa*sc;
   T[1] = zz*cc2*sb2 + xx*tmp1*tmp1 + yy*tmp2*tmp2;
-  
+
   /* T33 */
   T[2] = zz*cb2 + (yy*ca2 + xx*sa2)*sb2;
 
   /* T12 */
   T[3] = 0.125*(-4.0*(x-y)*(x+y)*cb*c2c*s2a + (-(x-y)*(x+y)*c2a*(3.0 + c2b) - 2.0*(xx + yy - 2.0*zz)*sb2) * s2c);
-  
+
   /* T13 */
   T[4] = sb*((x-y)*(x+y)*ca*cc*sa + cb*(zz - yy*ca2 - xx*sa2)*sc);
 
@@ -220,7 +221,7 @@ calc_pdtensor(double x, double y, double z, double a, double b, double c, double
 
 /* calculate linear anisotropic TLS parameters from non-linear TLS parameters */
 inline void
-calc_isotropic_tls_parameters(double NL_ITLS[NL_ITLS_NUM_PARAMS], double ITLS[ITLS_NUM_PARAMS]) {
+calc_isotropic_tls_parameters(const double NL_ITLS[NL_ITLS_NUM_PARAMS], double ITLS[ITLS_NUM_PARAMS]) {
   for (int i = 0; i < ITLS_NUM_PARAMS; ++i) {
     ITLS[i] = NL_ITLS[i];
   }
@@ -245,7 +246,7 @@ calc_isotropic_tls_parameters(double NL_ITLS[NL_ITLS_NUM_PARAMS], double ITLS[IT
 
 /* calculate linear anisotropic TLS parameters from non-linear TLS parameters */
 inline void
-calc_anisotropic_tls_parameters(double NL_ATLS[ATLS_NUM_PARAMS], double ATLS[ATLS_NUM_PARAMS]) {
+calc_anisotropic_tls_parameters(const double NL_ATLS[ATLS_NUM_PARAMS], double ATLS[ATLS_NUM_PARAMS]) {
   int i;
   double lx, ly, lz;
 
@@ -275,7 +276,7 @@ set_isotropic_jacobian(double *A, int m, int n, int row, double x, double y, dou
 #define FA(__i, __j) A[__i + (m * __j)]
 
   double xx, yy, zz, xy, xz, yz;
-   
+
   xx = x*x;
   yy = y*y;
   zz = z*z;
@@ -305,10 +306,10 @@ set_isotropic_jacobian(double *A, int m, int n, int row, double x, double y, dou
 // Sets the six rows of matrix A starting at A[i,j] with the anistropic
 // TLS model coefficents for a atom located at t position x, y, z with
 // least-squares weight w.  Matrix A is filled to coumn j+12.
-// 
+//
 // The matrix A(m,n) is filled in FORTRAN-style, that is, assuming
 // a column-major memory layout.  That's because, athough the
-// matrix is contructed in C, the SVD subroutine from LAPACK is 
+// matrix is contructed in C, the SVD subroutine from LAPACK is
 // written in FORTRAN.
 inline void
 set_anisotropic_jacobian(double *A, int m, int n, int row, double x, double y, double z, double dNL[6][6]) {
@@ -316,7 +317,7 @@ set_anisotropic_jacobian(double *A, int m, int n, int row, double x, double y, d
 
   int iU11, iU22, iU33, iU12, iU13, iU23;
   double xx, yy, zz, xy, xz, yz;
-  
+
   xx = x*x;
   yy = y*y;
   zz = z*z;
@@ -386,7 +387,7 @@ set_anisotropic_jacobian(double *A, int m, int n, int row, double x, double y, d
   FA(iU12, ATLS_S2211) =   z;
   FA(iU12, ATLS_S31)   =   x;
   FA(iU12, ATLS_S32)   =  -y;
-  
+
   /* U13 = T13 - xzL22 + xyL23 - yyL13 + yzL12 + yS1133 + zS23 - xS21 */
   FA(iU13, ATLS_T13)   = 1.0;
 
@@ -400,7 +401,7 @@ set_anisotropic_jacobian(double *A, int m, int n, int row, double x, double y, d
   FA(iU13, ATLS_S1133) =   y;
   FA(iU13, ATLS_S23)   =   z;
   FA(iU13, ATLS_S21)   =  -x;
-    
+
   /* U23 = T23 - yzL11 - xxL23 +xyL13 +xzL12 - xS2211 - xS1133 + yS12 - zS13  */
   FA(iU23, ATLS_T23)   = 1.0;
 
@@ -421,10 +422,10 @@ set_anisotropic_jacobian(double *A, int m, int n, int row, double x, double y, d
 
 // calculate Jacobian matrix
 inline void
-anisotropic_lmder1_fcn_jacobian(int m, int n,double *NL_ATLS, double *A, int lda) {
+anisotropic_lmder1_fcn_jacobian(const int m, const int n, const double *NL_ATLS, double *A, int lda) {
   double dNL[6][6];
-  calc_pdtensor_derivs(NL_ATLS[NL_ATLS_LX], NL_ATLS[NL_ATLS_LY], NL_ATLS[NL_ATLS_LZ], 
-		       NL_ATLS[NL_ATLS_LA], NL_ATLS[NL_ATLS_LB], NL_ATLS[NL_ATLS_LC], 
+  calc_pdtensor_derivs(NL_ATLS[NL_ATLS_LX], NL_ATLS[NL_ATLS_LY], NL_ATLS[NL_ATLS_LZ],
+		       NL_ATLS[NL_ATLS_LA], NL_ATLS[NL_ATLS_LB], NL_ATLS[NL_ATLS_LC],
 		       dNL);
 
   zero_dmatrix(A, m, n);
@@ -440,7 +441,7 @@ anisotropic_lmder1_fcn_jacobian(int m, int n,double *NL_ATLS, double *A, int lda
 
 // calculate function residuals
 void
-anisotropic_lmder1_fcn_R(int m, int n, double *NL_ATLS, double *R) {
+anisotropic_lmder1_fcn_R(const int m, const int n, const double *NL_ATLS, double *R) {
   double ATLS[ATLS_NUM_PARAMS];
   calc_anisotropic_tls_parameters(NL_ATLS, ATLS);
 
@@ -456,15 +457,15 @@ anisotropic_lmder1_fcn_R(int m, int n, double *NL_ATLS, double *R) {
 }
 
 // callback for lmder1
-// 
-// calculates residual function for m equations and store 
+//
+// calculates residual function for m equations and store
 // in R[i]
 //
 // calculates Jacobian and stores values in FORTRAN 2D
 // array A(i,j) where i is the equation and j is the parameter
 // fcn(     m,      n,         x,          fvec,      fjac,    ldfjac,    iflag)
-static void 
-anisotropic_lmder1_fcn(int *m, int *n, double *NL_ATLS, double *R, double *A, int *lda, int *iflag) {
+static void
+anisotropic_lmder1_fcn(const int *m, const int *n, const double *NL_ATLS, double *R, double *A, const int *lda, int *iflag) {
   if (*iflag == 1) {
     /* calculate f(x) = fvec */
     anisotropic_lmder1_fcn_R(*m, *n, NL_ATLS, R);
@@ -479,10 +480,10 @@ anisotropic_lmder1_fcn(int *m, int *n, double *NL_ATLS, double *R, double *A, in
 
 // calculate isotropic TLS model Jacobian matrix
 inline void
-isotropic_lmder1_fcn_jacobian(int m, int n,double *NL_ITLS, double *A, int lda) {
+isotropic_lmder1_fcn_jacobian(const int m, const int n, const double *NL_ITLS, double *A, int lda) {
   double dNL[6][6];
-  calc_pdtensor_derivs(NL_ITLS[NL_ITLS_LX], NL_ITLS[NL_ITLS_LY], NL_ITLS[NL_ITLS_LZ], 
-		       NL_ITLS[NL_ITLS_LA], NL_ITLS[NL_ITLS_LB], NL_ITLS[NL_ITLS_LC], 
+  calc_pdtensor_derivs(NL_ITLS[NL_ITLS_LX], NL_ITLS[NL_ITLS_LY], NL_ITLS[NL_ITLS_LZ],
+		       NL_ITLS[NL_ITLS_LA], NL_ITLS[NL_ITLS_LB], NL_ITLS[NL_ITLS_LC],
 		       dNL);
 
   zero_dmatrix(A, m, n);
@@ -496,7 +497,7 @@ isotropic_lmder1_fcn_jacobian(int m, int n,double *NL_ITLS, double *A, int lda) 
 
 // calculate isotropic TLS model function residuals
 inline void
-isotropic_lmder1_fcn_R(int m, int n, double *NL_ITLS, double *R) {
+isotropic_lmder1_fcn_R(const int m, const int n, const double *NL_ITLS, double *R) {
   double ITLS[ITLS_NUM_PARAMS];
   calc_isotropic_tls_parameters(NL_ITLS, ITLS);
 
@@ -511,14 +512,14 @@ isotropic_lmder1_fcn_R(int m, int n, double *NL_ITLS, double *R) {
 
 // callback for lmder1
 //
-// calculates residual function for m equations and store 
+// calculates residual function for m equations and store
 // in R[i]
 //
 // calculates Jacobian and stores values in FORTRAN 2D
 // array A(i,j) where i is the equation and j is the parameter
 // fcn(     m,      n,         x,          fvec,      fjac,    ldfjac,    iflag)
-void 
-isotropic_lmder1_fcn(int *m, int *n, double *NL_ITLS, double *R, double *A, int *lda, int *iflag) {
+void
+isotropic_lmder1_fcn(const int *m, const int *n, const double *NL_ITLS, double *R, double *A, const int *lda, int *iflag) {
   if (*iflag == 1) {
     // calculate f(x) = fvec
     isotropic_lmder1_fcn_R(*m, *n, NL_ITLS, R);
@@ -529,12 +530,12 @@ isotropic_lmder1_fcn(int *m, int *n, double *NL_ITLS, double *R, double *A, int 
 }
 
 ConstrainedFitTLSModel::ConstrainedFitTLSModel()
-  : num_rows(0), 
-    num_cols(0), 
-    fvec(0), 
-    fjac(0), 
-    ipvt(0), 
-    lwa(0), 
+  : num_rows(0),
+    num_cols(0),
+    fvec(0),
+    fjac(0),
+    ipvt(0),
+    lwa(0),
     wa(0),
     max_num_atoms(0),
     iatom(0),
@@ -611,9 +612,8 @@ ConstrainedFitIsotropicTLSModel::fit_params() {
   int num_equations = idata_vector.size();
   int num_variables = ITLS_NUM_PARAMS;
   double tol = tolerance;
-  lmder1_(isotropic_lmder1_fcn, &num_equations, &num_variables, NL_ITLS, fvec, fjac, &num_equations, &tol, &info, ipvt, wa, &lwa);
+  __minpack_func__(lmder1)(isotropic_lmder1_fcn, &num_equations, &num_variables, NL_ITLS, fvec, fjac, &num_equations, &tol, &info, ipvt, wa, &lwa);
   g_pISolver = 0;
-
   calc_isotropic_tls_parameters(NL_ITLS, tls_model->get_params());
 }
 
@@ -664,7 +664,7 @@ ConstrainedFitAnisotropicTLSModel::fit_params() {
   int num_equations = 6 * adata_vector.size();
   int num_variables = ATLS_NUM_PARAMS;
   double tol = tolerance;
-  lmder1_(anisotropic_lmder1_fcn, &num_equations, &num_variables, NL_ATLS, fvec, fjac, &num_equations, &tol, &info, ipvt, wa, &lwa);
+  __minpack_func__(lmder1)(anisotropic_lmder1_fcn, &num_equations, &num_variables, NL_ATLS, fvec, fjac, &num_equations, &tol, &info, ipvt, wa, &lwa);
   g_pASolver = 0;
 
   calc_anisotropic_tls_parameters(NL_ATLS, tls_model->get_params());

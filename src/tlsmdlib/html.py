@@ -19,8 +19,8 @@ import re        ## used in summary_file_update(), 2009-05-07
 import pickle    ## used to temporarily store user form data
 
 ## Python Imaging Library imports
-import Image
-import ImageDraw
+from PIL import Image
+from PIL import ImageDraw
 
 ## Pymmlib
 from mmLib import Constants, Colors, Viewer, R3DDriver, Structure, Gaussian, FileIO, TLS
@@ -157,7 +157,7 @@ def calc_orientation(struct, chain):
     ori["R"]        = R
     ori["centroid"] = centroid + numpy.dot(numpy.transpose(R), xydelta)
     ori["pwidth"]   = pwidth
-    ori["pheight"]  = pheight 
+    ori["pheight"]  = pheight
     ori["hzoom"]    = zoom
 
     ## calculate near, far clipping plane
@@ -249,7 +249,7 @@ def html_tls_group_table(ntls, chain, cpartition, report_root = None, detail = N
 
         tls_group = tls.tls_group
         mtls_info = tls.model_tls_info
-        ## EAM DEBUG - I think this results from a previous exception in 
+        ## EAM DEBUG - I think this results from a previous exception in
         ## html_tls_graph_path()
         if mtls_info == None:
             l += ['<tr style="background-color:#ffeeee">',
@@ -331,7 +331,7 @@ def html_tls_group_table(ntls, chain, cpartition, report_root = None, detail = N
 
         ## "Analysis of TLS Group n Chain Segments" table
         ## FIXME: Why are the 'tls.rmsd_b'/"RMSD B" values different from the
-        ## off-diagonal matrix values? 
+        ## off-diagonal matrix values?
         ## The "RMSD B Values of Combined TLS Groups" values.
         l += ['<td align="center" valign="middle">',
               '<img src="%s" alt="%s"/></td>' % (
@@ -363,8 +363,8 @@ span.small {font-size:0.8em;font-weight:normal;text-align:center;}
 table.title {border:0;width:100%;background-color:#eee;}
 td.title {font-size:0.7em;}
 table.report_globals {
-    padding:3px; width:75%; background-color:#eee; 
-    font-size:small; border:0 
+    padding:3px; width:75%; background-color:#eee;
+    font-size:small; border:0
     }
 tr.report_globals { background-color:#ddd; }
 table.tls_segments {
@@ -614,7 +614,7 @@ class HTMLSummaryReport(Report):
     def generate_subtitle(self):
         ##FIXME: This file has write permission problems, 2010-09-25
         #file = open("%s/%s.txt" % (conf.WEBTMP_PATH, self.job_id), "r")
-        #file = "%s/%s/%s/user_info.dat" % (conf.TLSMD_WWW_ROOT, "jobs", 
+        #file = "%s/%s/%s/user_info.dat" % (conf.TLSMD_WWW_ROOT, "jobs",
         #                                   self.job_id)
         try:
             file = open("../user_info.dat", "r")
@@ -994,7 +994,7 @@ class HTMLReport(Report):
 
         if self.page_multi_chain_alignment != None:
             l.append('<p><a href="%s">%s</a></p>' % (
-                self.page_multi_chain_alignment["href"], 
+                self.page_multi_chain_alignment["href"],
                 self.page_multi_chain_alignment["title"]))
         else:
             l.append('<p><u>Only one chain was analyized in this structure, ')
@@ -1007,7 +1007,7 @@ class HTMLReport(Report):
              '</center>',
              '<p class="captions">%s</p>' % (captions.REFINEMENT_PREP_TEXT),
              '<p><a href="%s">%s</a></p>' % (
-                 self.page_refinement_prep["href"], 
+                 self.page_refinement_prep["href"],
                  self.page_refinement_prep["title"]),
              self.html_foot()]
 
@@ -1093,7 +1093,7 @@ class HTMLReport(Report):
               '<center><a href="index.html">Back to Index</a></center>',
               '<br/>' ]
 
-        ## if there were no valid chain configurations found then write out a 
+        ## if there were no valid chain configurations found then write out a
         ## useful error message
         if chain.partition_collection.num_chain_partitions() == 0:
             l += ['<p>%s</p>' % (captions.NO_VALID_CONFIGURATIONS),
@@ -1246,7 +1246,7 @@ class HTMLReport(Report):
             try:
                 jmol_file = self.jmol_html(chain, cpartition)
             except:
-                ## EAM FIXME:  But really something must have gone wrong 
+                ## EAM FIXME:  But really something must have gone wrong
                 ## before this point.
                 console.stdoutln("     Warning: Jmol setup failed in jmol_html")
                 print console.formatExceptionInfo()
@@ -1265,7 +1265,7 @@ class HTMLReport(Report):
                 jmol_animate_file, raw_r3d_file, r3d_body_file =\
                     self.jmol_animate_html(chain, cpartition)
             except:
-                ## EAM FIXME:  But really something must have gone wrong 
+                ## EAM FIXME:  But really something must have gone wrong
                 ## before this point.
                 jmol_animate_file = ""
                 msg  = "     Warning: [%s] Jmol setup failed in " % chain_seg
@@ -1281,7 +1281,7 @@ class HTMLReport(Report):
         else:
             try:
                 basename = "%s_CHAIN%s_NTLS%d" % (
-                    self.struct_id, chain.chain_id, 
+                    self.struct_id, chain.chain_id,
                     cpartition.num_tls_segments())
                 png_file = "%s.png" % (basename)
                 pml_file = "" ## never used
@@ -1297,7 +1297,7 @@ class HTMLReport(Report):
                         ## cat header.r3d static.r3d animate.r3d grey.r3d \
                         ## bases.r3d sugars.r3d
                         render_cmd = "cat %s ../struct.r3d %s %s ../bases.r3d ../sugars.r3d | %s > %s 2> /dev/null" % (
-                            self.r3d_header_file, r3d_body_file, 
+                            self.r3d_header_file, r3d_body_file,
                             conf.GREY_R3D_FILE, conf.RENDER, png_file)
                     else:
                         ## there are _not_ any nucleic acids, so
@@ -1638,7 +1638,7 @@ class HTMLReport(Report):
             if tls.superposition_vscrew != None:
                 gl_tls_group.properties.update(COR_vector = tls.superposition_vscrew)
 
-            ## set width of trace according to the group's translational 
+            ## set width of trace according to the group's translational
             ## tensor trace
             mtls_info = tls.model_tls_info
             tiso = (mtls_info["Tr1_eigen_val"] +\
@@ -1754,7 +1754,7 @@ class HTMLReport(Report):
             tls_file.tls_desc_list.append(tls_desc)
             tls_desc.set_tls_group(tls.tls_group)
             for frag_id1, frag_id2 in tls.iter_segment_ranges():
-                tls_desc.add_range(chain_id, frag_id1, 
+                tls_desc.add_range(chain_id, frag_id1,
                                    chain_id, frag_id2, "ALL")
                 flatfile.write("\nCCCC %s.0 TLSOUT %s:%s %f" % (
                     chain_ntls, frag_id1, frag_id2, tls.tls_group.itls_T))
@@ -1791,7 +1791,7 @@ class HTMLReport(Report):
             phenix_file.tls_desc_list.append(tls_desc)
             tls_desc.set_tls_group(tls.tls_group)
             for frag_id1, frag_id2 in tls.iter_segment_ranges():
-                tls_desc.add_range(chain_id, frag_id1, 
+                tls_desc.add_range(chain_id, frag_id1,
                                    chain_id, frag_id2, "ALL")
 
         phenix_file.save(open(phenixout_file, "w"))
@@ -2023,7 +2023,7 @@ class HTMLReport(Report):
              '<html>',
              '<head>',
              '<title>%s: Chain %s using %d TLS Groups</title>' % (
-                 self.struct_id, chain.chain_id, 
+                 self.struct_id, chain.chain_id,
                  cpartition.num_tls_segments()),
              '<script type="text/javascript" src="%s/Jmol.js">' % (
                  conf.JMOL_DIR),
@@ -2377,7 +2377,7 @@ class ChainNTLSAnalysisReport(Report):
         return "".join(l)
 
     def html_ca_differance(self):
-        """Perform a fit analysis of the protein chain as spanned by the 
+        """Perform a fit analysis of the protein chain as spanned by the
         tlsopt TLS groups.
         """
         ## class ChainNTLSAnalysisReport()
@@ -2423,11 +2423,11 @@ class ChainNTLSAnalysisReport(Report):
         return "".join(l)
 
     def tls_segment_recombination(self):
-        """The TLSMD optimization algorithm models TLS groups as sequential 
-        segments of a protein or DNA/RNA chain. This matrix shows the 
-        RMSD B values of the individual groups on the diagonal, and the 
-        RMSD B values of combined groups as off-diagonal elements. This 
-        helps identify non-contiguous protein segments which may be 
+        """The TLSMD optimization algorithm models TLS groups as sequential
+        segments of a protein or DNA/RNA chain. This matrix shows the
+        RMSD B values of the individual groups on the diagonal, and the
+        RMSD B values of combined groups as off-diagonal elements. This
+        helps identify non-contiguous protein segments which may be
         combined into a single TLS group.
         """
         ## class ChainNTLSAnalysisReport()

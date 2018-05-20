@@ -56,13 +56,3 @@ def session_login(request):
 def session_logout(request):
     logout(request)
     return Response(status=200)
-
-
-def serve_angular_app(request, path):
-    try:
-        response = static.serve(
-            request, path, document_root=os.path.join(settings.SERVICE_ROOT, 'angular_app', 'app'))
-    except Exception:
-        response = static.serve(
-            request, '/index.html', document_root=os.path.join(settings.SERVICE_ROOT, 'angular_app', 'app'))
-    return response

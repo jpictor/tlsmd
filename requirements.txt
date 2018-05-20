@@ -1,5 +1,5 @@
 celery
-Django
+Django==1.11
 django-filter
 djangorestframework
 djangorestframework-filters
@@ -10,6 +10,7 @@ gunicorn
 isodate
 jsonfield
 Markdown
+Pillow
 psycopg2
 python-dateutil
 pytz

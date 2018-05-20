@@ -5,7 +5,7 @@ tlsmdmodule = Extension(
     name = 'tlsmdmodule',
     define_macros = [('MAJOR_VERSION', '1'), ('MINOR_VERSION', '0')],
     include_dirs = ['/usr/local/include'],
-    libraries = ['lapack', 'blas'],
+    libraries = ['lapack', 'blas', 'cminpack'],
     library_dirs = ['/usr/local/lib'],
     sources = map(lambda x: os.path.join('c-modules', 'tlsmdmodule', x), [
         'structure.cpp',
@@ -30,7 +30,7 @@ setup(
     description = 'TLS motion analysis for crystallographically determined protein structures.',
     author = 'Jay Painter',
     author_email = 'jay.painter@gmail.com',
-    url = 'https://github.com/jpictor/',
+    url = 'https://github.com/jpictor/tlsmd',
     long_description = LONG_DESCRIPTION,
     ext_modules = [tlsmdmodule]  # add tlsvld here when fixed
 )
