@@ -7,81 +7,10 @@
 
 ## Python modules
 import re
-import MySQLdb
+#import MySQLdb
 
 ## TLSMD
 import conf, misc
-
-##== MySQL database/table creation code ========================================
-## CREATE DATABASE tlsmddb;
-## GRANT ALL PRIVILEGES ON tlsmddb.* TO 'tlsmd'@'localhost' \
-## IDENTIFIED BY 'passwd' WITH GRANT OPTION; FLUSH PRIVILEGES;
-
-##== Create main 'status_page' table ===========================================
-## CREATE TABLE status_page (jobID INT(5) NOT NULL auto_increment, job_num INT(5),
-##        job_id VARCHAR(19), state VARCHAR(10), structure_id VARCHAR(4),
-##        header_id VARCHAR(4), submit_time DECIMAL(13,2), 
-##        run_time_begin DECIMAL(13,2), run_time_end DECIMAL(13,2), 
-##        chain_sizes VARCHAR(255), submit_date VARCHAR(24), 
-##        ip_address VARCHAR(15), email VARCHAR(320), user_name VARCHAR(100), 
-##        user_comment VARCHAR(128), private_job BOOLEAN, via_pdb BOOLEAN, 
-##        pid SMALLINT(5) UNSIGNED, tls_model ENUM('ISOT','ANISO'), 
-##        weight ENUM('NONE','IUISO'), include_atoms ENUM('ALL','MAINCHAIN'), 
-##        plot_format ENUM('PNG','SVG'), generate_jmol_view BOOLEAN, 
-##        generate_jmol_animate BOOLEAN, generate_histogram BOOLEAN, 
-##        cross_chain_analysis BOOLEAN, nparts INT(2), resolution DECIMAL(4,2), 
-##        UNIQUE KEY `job_id` (`job_id`), PRIMARY KEY (jobID));
-
-# cat /proc/sys/kernel/pid_max -> 32768
-
-## Config
-HOST   = "localhost"
-USER   = "tlsmd"
-DB     = "tlsmddb"
-try:
-    PASSWD = open(conf.ADMIN_PASSWORD_FILE, "r").read().strip()
-except IOError:
-    PASSWD = ""
-
-def log_write(x):
-    mysql_log = open(conf.MYSQL_LOG_FILE, "a+")
-    mysql_log.write("[%s] %s\n" % (misc.timestamp(), x))
-    mysql_log.close()
-
-def force_reconnect(conn):
-    if conn:  # if previously attached
-        try:
-            conn.ping()  # test connection
-        except MySQLdb.OperationalError, message:  # loss of connection
-            conn = None  # we lost database connection
-    if conn is None:  # if no valid database handle
-        #db = MySQLdb.connect(...)  # connect to database
-        #log_write("WARNING: MySQLdb.connect is None")
-        conn = MySQLdb.connect(host = HOST,
-                               user = USER,
-                               passwd = PASSWD,
-                               db = DB)
-    return conn
-
-def mysql_connect():
-    """connects to the MySQL server
-    """
-    conn = None
-    #conn = force_reconnect(conn)
-    try:
-        conn = MySQLdb.connect(host = HOST,
-                               user = USER,
-                               passwd = PASSWD,
-                               db = DB)
-        conn.ping()
-        return conn
-    except MySQLdb.Error, e:
-        log_write("ERROR: %d: %s" % (e.args[0], e.args[1]))
-        conn = force_reconnect(conn)
-        #sys.exit (1)
-        #return ''
-        return conn
-
 
 class MySQLConnect():
     def __init__(self):
@@ -137,7 +66,7 @@ class MySQLConnect():
             return False
 
         string = """INSERT INTO %s
-                 SELECT * FROM %s 
+                 SELECT * FROM %s
                  WHERE job_id='%s';""" % (
             self.archive_tbl, self.status_page_tbl, job_id)
         return self.execute_cmd(string)
@@ -147,7 +76,7 @@ class MySQLConnect():
         if not self.job_exists(job_id):
             return False
         string = """INSERT INTO %s
-                 SELECT * FROM %s 
+                 SELECT * FROM %s
                  WHERE job_id='%s';""" % (
             self.pdb_list_tbl, self.status_page_tbl, job_id)
         return self.execute_cmd(string)
@@ -168,9 +97,9 @@ class MySQLConnect():
         string = "SELECT MAX(job_num) FROM %s;" % (
             self.status_page_tbl)
         max_num = self.execute_cmd(string, dict = False, select = True)
-	if max_num:
+        if max_num:
             job_num = int(max_num) + 1
-	else:
+        else:
             job_num = 1001
 
         ## assign job_id

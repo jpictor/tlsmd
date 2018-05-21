@@ -43,7 +43,7 @@ TESTING = RUN_MODE == 'test'
 SERVICE_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 SERVICE_PARENT_DIR = os.path.dirname(SERVICE_ROOT)
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'baseapp.settings')
-DEBUG = os.environ.get('DEBUG', False)
+DEBUG = os.environ.get('DEBUG', True)
 
 ####################################################################
 ## pull version information from webstack root
@@ -58,9 +58,9 @@ except IOError:
 
 DATA_ROOT = os.path.join(SERVICE_ROOT, 'data')
 LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO').upper()
-REPORT_BASEURL = os.environ.get('ENTITY_BASEURL', 'http://10.0.0.152:8192/report')
+REPORT_BASEURL = os.environ.get('ENTITY_BASEURL', 'http://localhost:8192/report')
 REPORT_ROOT = os.environ.get('REPORT_ROOT', '/disk/d0/data/report')
-DATABASE_URL = os.environ.get('DATABASE_URL', 'postgres://postgres:password@10.0.0.152/tlsmd')
+DATABASE_URL = os.environ.get('DATABASE_URL', 'postgres://postgres:password@localhost/tlsmd')
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'amqp://{service_name}_user:password@localhost:5672/{service_name}_vhost')
 
 ####################################################################

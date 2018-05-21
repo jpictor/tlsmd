@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# coding=UTF-8 
+# coding=UTF-8
 ## TLS Motion Determination (TLSMD)
 ## Copyright 2002-2010 by TLSMD Development Group (see AUTHORS file)
 ## This code is part of the TLSMD distribution and governed by
@@ -20,7 +20,7 @@ from signal import SIGUSR1 ## Needed for SignalJob()
 from signal import SIGHUP  ## Needed for KillJob()
 import signal
 import cPickle
-import bsddb
+#import bsddb
 import socket
 import xmlrpclib
 import SocketServer
@@ -254,7 +254,7 @@ def RequeueJob(webtlsmdd, job_id):
     else:
         return False ## temp. until fixed, 2009-07-01
         #gdict = webtlsmdd.jobdb.retrieve_globals()
-        #job_num = gdict['next_job_num'] 
+        #job_num = gdict['next_job_num']
         #gdict['next_job_num'] = job_num + 1
         #webtlsmdd.jobdb.store_globals(gdict)
         #webtlsmdd.jobdb.job_data_set(job_id, 'job_num', job_num)
@@ -355,7 +355,7 @@ def Refmac5RefinementPrep(job_id, struct_id, chain_ntls, wilson):
         analysis_base_url = "%s/ANALYSIS" % (job_url)
     else:
         ## User-submitted (non-pdb.org) results/analyses files are in the
-        ## standard place (aka directory/path/url) and are deleted every 
+        ## standard place (aka directory/path/url) and are deleted every
         ## DELETE_DAYS (see webtlsmdcleanup.py) days.
         job_dir = os.path.join(conf.TLSMD_WORK_DIR, job_id)
         job_url = os.path.join(conf.TLSMD_PUBLIC_URL, "jobs", job_id)

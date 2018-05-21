@@ -118,7 +118,7 @@ def SuperimposePoints(src_points, dst_points):
     F[3,2] = F[2,3]
     F[3,3] =-R[0,0] - R[1,1] + R[2,2]
 
-    evals, evecs = linalg.eigenvectors(F)
+    evals, evecs = numpy.linalg.eig(F)
 
     i = numpy.argmax(evals)
     eval = evals[i]

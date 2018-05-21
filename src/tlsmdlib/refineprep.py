@@ -165,7 +165,7 @@ class RefinePrepPage(Page):
             raise RefinePrepError("Form Processing Error: No Chains Selected")
 
         ## call webtlsmdd to generate files (Refmac5 + PHENIX)
-        result = webtlsmdd.refmac5_refinement_prep(job_id, struct_id, 
+        result = webtlsmdd.refmac5_refinement_prep(job_id, struct_id,
                                                    chain_ntls, wilson)
         if isinstance(result, str):
             raise RefinePrepError(result)
@@ -256,13 +256,10 @@ def check_job_id(form):
 
 def main():
     form = cgi.FieldStorage()
-
     page = RefinePrepPage(form)
-
     try:
         print page.html_page()
-
-    except RefinePrepError, err:
+    except RefinePrepError as err:
         text = '<p>%s</p>' % (err.text)
         page = ErrorPage(form, text)
         print page.html_page()

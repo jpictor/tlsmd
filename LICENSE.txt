@@ -1,6 +1,6 @@
 This license will change to the Python License once it reaches 1.0.
-We're flexable, and if you have need a different license sooner,
-just email the authoer and we can talk about it.
+We're flexible, and if you have need a different license sooner,
+just email the author and we can talk about it.
 ---------------------------------------------------------------------------
 The Artistic License
 

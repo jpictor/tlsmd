@@ -5,8 +5,8 @@ SEE: http://skuld.bmsc.washington.edu/~tlsmd/install.html
 
 INTRODUCTION::
 
-The TLSMD program is a web-based application which analyzes the thermal 
-parameters (temperature factors, also called atomic displacement parameters) 
+The TLSMD program is a web-based application which analyzes the thermal
+parameters (temperature factors, also called atomic displacement parameters)
 of crystallographically determined protein structures.
 
 A fully functional installation will require:
@@ -14,7 +14,7 @@ A fully functional installation will require:
    (e.g., Apache).
 2) A installation of Python >=2.4.x with the following extensions:
     - NumPy;
-    - the Berkeley Database Module bsddb (this has been depreciated in favour
+    - the Berkeley Database Module bsddb (this has been depreciated in favor
       of MySQL);
     - and the Python Imaging Library (PIL).
     - Future versions of TLSMD will require TurboGears.
@@ -31,7 +31,7 @@ tlsmdmodule (a shared object). It is the computational core of TLSMD.
 STEP-BY-STEP INSTRUCTIONS::
 
 [Install Python]
-TLSMD requires Python 2.4 or greater. It also requires several additional 
+TLSMD requires Python 2.4 or greater. It also requires several additional
 modules(Python extensions). Each module should come with detailed installation
 instructions. These modules are:
 * NumPy (http://www.numpy.org)
@@ -39,11 +39,11 @@ instructions. These modules are:
 * Berkeley Database Module bsddb (no longer required; see MySQL)
 	- this is a standard Python module, but may be packaged
 	separately by some Linux distributions, or it may not be built
-	if you are build Python from source and the configure script 
+	if you are build Python from source and the configure script
 	cannot locate the appropriate libdb development headers
 * MySQL
 * Python Macromolecular Library (http://pymmlib.sourceforge.net)
-	- you will not need to build the optional OpenGL accelerator 
+	- you will not need to build the optional OpenGL accelerator
 	module
 
 [Build the LAPACK Library]
